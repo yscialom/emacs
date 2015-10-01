@@ -42,8 +42,8 @@
 ;; C-MODE ----------------------------------------------------------------------------------------------
 ;;
 (set-default 'tab-width 4)                                           ;; <TAB> is 4 character wide
-(setq tab-stop-list (number-sequence 4 200 4))		                 ;; <TAB> is 4 character wide
-(setq-default indent-tabs-mode nil)					                 ;; <TAB> inserts SPACES only
+(setq tab-stop-list (number-sequence 4 200 4))                       ;; <TAB> is 4 character wide
+(setq-default indent-tabs-mode nil)                                      ;; <TAB> inserts SPACES only
 (setq c-default-style "linux")                                       ;; Linux -style indentation
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
