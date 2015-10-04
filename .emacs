@@ -23,7 +23,7 @@
 
 ;; split window 2/3 - 1/3 and open termial in right hand window
 (split-window-horizontally)
-(enlarge-window-horizontally 33)
+(enlarge-window-horizontally 13)
 (other-window 1)
 (term "/bin/bash")
 ;(switch-to-buffer "*terminal*");broken
