@@ -26,9 +26,16 @@
 (enlarge-window-horizontally 13)
 (other-window 1)
 (term "/bin/bash")
-;(switch-to-buffer "*terminal*");broken
-;(other-window 0);broken
+(setq initial-buffer-choice (
+  lambda () (switch-to-buffer (get-buffer("*terminal*"))
+)))
 
+
+
+;;
+;; START-UP NON-UI stuff -------------------------------------------------------------------------------
+;;
+(server-start)
 
 
 ;;
@@ -93,7 +100,7 @@
   (switch-to-buffer (find-file-in-largest-window file))
   (clean-buffer)
   (save-buffer)
-  ;;(kill-buffer)
+  (kill-buffer)
   )
 
 
