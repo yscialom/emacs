@@ -42,12 +42,17 @@
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
+;; req-package
+(require 'req-package)
+(setq use-package-always-ensure 'true)
 
 ;;
 ;; GENERAL TEXT ----------------------------------------------------------------------------------------
 ;;
-(setq require-final-newline 'query)                                  ;; always end a file with a newline
+(setq require-final-newline 'always)                                  ;; always end a file with a newline
 
 
 
@@ -78,6 +83,36 @@
   (setq c-basic-offset 4)
   (c-set-offset 'substatement-open 0))
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+
+
+;;
+;; C/C++ IDE -------------------------------------------------------------------------------------------
+;; (see http://martinsosic.com/development/emacs/2017/12/09/emacs-cpp-ide.htm)
+;;
+;; 1. Company
+(req-package company
+  :config
+  (progn
+    (add-hook 'after-init-hook 'global-company-mode)
+    (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
+    (setq company-idle-delay 0)))
+
+;; 2. Flycheck
+(req-package flycheck
+  :config
+  (progn
+    (global-flycheck-mode)))
+
+;; 3. Irony
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony))
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
 
 
 
