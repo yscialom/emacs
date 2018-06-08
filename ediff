@@ -22,10 +22,6 @@ if [ $# -ge 4 ]; then
     BASE="${3}"; shift
 fi
 MERGED="${3}"
-echo "LOCAL=$LOCAL"
-echo "REMOTE=$REMOTE"
-echo "BASE=$BASE"
-echo "MERGED=$MERGED"
 
 ##
 # check arguments
@@ -40,6 +36,17 @@ function file_must_exist () {
 file_must_exist "${LOCAL}"
 file_must_exist "${REMOTE}"
 test -z "${BASE}" || file_must_exist "${BASE}"
+
+##
+# backup things
+#
+suffix=".orig"
+if [ "${LOCAL}" == "${MERGED}" ]; then
+    LOCAL="${LOCAL}${suffix}"
+fi
+if [ -f "${MERGED}" ]; then
+    mv -f "${MERGED}" "${MERGED}${suffix}"
+fi
 
 ##
 # OK RUN
