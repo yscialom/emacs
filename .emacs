@@ -25,7 +25,10 @@
 ;; START-UP NON-UI stuff -------------------------------------------------------------------------------
 ;;
 (server-start)
-
+; When emacsclient is called from a waiting program (e.g. git), it prompts confirmation
+; before killing a buffer since a client "is still waiting" or something like this.
+; This is an anoyance, and the following deal with it:
+(remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
 
 ;;
 ;; PACKAGES --------------------------------------------------------------------------------------------
