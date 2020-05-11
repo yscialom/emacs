@@ -1,0 +1,26 @@
+#
+## === PATH ===
+#
+
+
+#
+## === PREFERENCES ===
+#
+# You may need to manually set your language environment
+export LANG=en_GB.UTF-8
+export LANGUAGE=en_GB:en
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+    export EDITOR='ea'
+else
+    export EDITOR='emacs'
+fi
+
+
+#
+## === ALIASES ===
+#
+if [ -f ~/.agnostic_aliases ]; then
+    . ~/.agnostic_aliases
+fi
