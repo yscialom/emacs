@@ -19,7 +19,7 @@ fi
 #
 #emacsclient -nqe 'nil' 2> /dev/null || nohup emacs &
 if ! lsof -c emacs | grep -q /server ; then
-    nohup emacs 2> /dev/null &
+    emacs 2>&1 >/dev/null &
     echo -n "Starting emacs..."
     timeout 5 bash -c -- 'until lsof -c emacs | grep -q /server ; do echo -n . ; sleep 1 ;  done' \
     && echo " OK" \
