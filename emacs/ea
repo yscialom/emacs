@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#
+## help
+#
+usage () {
+    self="$(basename ${0})"
+    echo "Usage: ${self} FILES..."
+    echo "Open FILES in emacs."
+    exit ${1:-0}
+}
+
+if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]
+then usage 0
+fi
+
+#
+## start emacs if need be
+#
+#emacsclient -nqe 'nil' 2> /dev/null || nohup emacs &
+if ! lsof -c emacs | grep -q /server ; then
+    nohup emacs 2> /dev/null &
+    echo -n "Starting emacs..."
+    timeout 5 bash -c -- 'until lsof -c emacs | grep -q /server ; do echo -n . ; sleep 1 ;  done' \
+    && echo " OK" \
+    || (echo "KO" ; exit 1)
+fi
+
+
+#
+## open files
+#
+while [[ $# > 0 ]] ; do
+    filepath=$(readlink -f "${1}")
+    shift
+    emacsclient --no-wait --quiet --eval "(find-file-in-largest-window \"${filepath}\")" > /dev/null
+done

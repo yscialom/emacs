@@ -18,7 +18,8 @@
 ;; default background-color, font and frame size
 (add-to-list 'default-frame-alist '(background-color . "#FFFFEA"))
 (set-face-attribute 'default nil :height 115)
-
+(add-to-list 'default-frame-alist '(height . 65))
+(add-to-list 'default-frame-alist '(width . 267))
 
 
 ;;
