@@ -1,0 +1,46 @@
+##
+# YSC aliases
+#
+
+#
+## === GNU TOOLS ===
+#
+# ls
+alias ls='/bin/ls --color=auto'
+alias l='ls -CF'
+alias ll='ls -alhF'
+# grep
+alias grep='/bin/grep --color=auto'
+alias rgrep='grep --recursive --line-number'
+# mkdir+cd
+cdn() { mkdir -p "${1}" && cd "${1}"; }
+# which / command
+alias which='command -v'
+
+# backup
+function bak () {
+	cp "$1" "$1.bak-$(date +'%Y%m%d-%H%M%S')"
+}
+
+
+#
+## === DEVELOPMENT ===
+#
+
+
+#
+## === WRITTING ===
+#
+# pdflatex
+pdflatex="pdflatex -file-line-error -interaction nonstopmode"
+
+
+#
+## === MULTIMEDIA ===
+#
+# Fetch fiting subtitles
+alias subtitles-eng="filebot -get-subtitles"
+alias subtitles-fra="subtitles-eng --lang fr"
+# Fetch second best subtitles
+alias subtitles-second-best-eng="subtitles-eng -non-strict"
+alias subtitles-second-best-fra="subtitles-fra -non-strict"
