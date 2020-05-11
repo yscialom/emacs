@@ -1,10 +1,10 @@
+;; -*- utf-8 -*-
 ;;
 ;; @file .emacs
 ;; @author Yankel Scialom (YSC) <yankel\@scialom.org>
-;; @date 2015-10-01
+;; @date 2018-05-29
 ;; @brief My .emacs init script.
 ;;
-
 
 
 ;;
@@ -16,32 +16,46 @@
 (setq mouse-wheel-progressive-speed nil)                             ;; disable progressive wheel speed
 
 ;; default background-color, font and frame size
-(add-to-list 'default-frame-alist '(background-color . "#FFFFE8"))
+(add-to-list 'default-frame-alist '(background-color . "#FFFFEA"))
 (set-face-attribute 'default nil :height 115)
 (add-to-list 'default-frame-alist '(height . 65))
 (add-to-list 'default-frame-alist '(width . 267))
-
-;; split window 2/3 - 1/3 and open termial in right hand window
-(split-window-horizontally)
-(enlarge-window-horizontally 13)
-(other-window 1)
-(term "/bin/bash")
-(setq initial-buffer-choice (
-  lambda () (switch-to-buffer (get-buffer("*terminal*"))
-)))
-
 
 
 ;;
 ;; START-UP NON-UI stuff -------------------------------------------------------------------------------
 ;;
 (server-start)
+; When emacsclient is called from a waiting program (e.g. git), it prompts confirmation
+; before killing a buffer since a client "is still waiting" or something like this.
+; This is an anoyance, and the following deal with it:
+(remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
 
+;;
+;; PACKAGES --------------------------------------------------------------------------------------------
+;;
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+;; req-package
+(require 'req-package)
+(setq use-package-always-ensure 'true)
 
 ;;
 ;; GENERAL TEXT ----------------------------------------------------------------------------------------
 ;;
-(setq require-final-newline 'query)                                  ;; always end a file with a newline
+(setq require-final-newline 'always)                                  ;; always end a file with a newline
 
 
 
@@ -50,7 +64,7 @@
 ;;
 (set-default 'tab-width 4)                                           ;; <TAB> is 4 character wide
 (setq tab-stop-list (number-sequence 4 200 4))                       ;; <TAB> is 4 character wide
-(setq-default indent-tabs-mode nil)                                      ;; <TAB> inserts SPACES only
+(setq-default indent-tabs-mode nil)                                  ;; <TAB> inserts SPACES only
 (setq c-default-style "linux")                                       ;; Linux -style indentation
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -58,8 +72,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(c-basic-offset 4 t)
- '(safe-local-variable-values (quote ((encoding . utf-8))))
-)
+ '(inhibit-startup-screen t)
+ '(package-selected-packages (quote (markdown-mode csv-mode)))
+ '(safe-local-variable-values (quote ((encoding . utf-8)))))
 (show-paren-mode 1)                                                  ;; C visual help
 
 
@@ -75,14 +90,38 @@
 
 
 ;;
+;; C/C++ IDE -------------------------------------------------------------------------------------------
+;; (see http://martinsosic.com/development/emacs/2017/12/09/emacs-cpp-ide.htm)
+;;
+;; 1. Company
+(req-package company
+  :config
+  (progn
+    (add-hook 'after-init-hook 'global-company-mode)
+    (global-set-key (kbd "M-/") 'company-complete-common-or-cycle)
+    (setq company-idle-delay 0)))
+
+;; 2. Flycheck
+(req-package flycheck
+  :config
+  (progn
+    (global-flycheck-mode)))
+
+;; 3. Irony
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony))
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+
+
+;;
 ;; FUNCTIONS -------------------------------------------------------------------------------------------
 ;;
-(defun find-file-in-largest-window(file)
-  "find-file in get-largest-window"
-  (interactive "sFile to visit: ")
-  (select-window (get-largest-window))
-  (find-file file)
-  )
 (defun indent-buffer ()
   "Indent buffer according to current mode and style"
   (interactive)
@@ -102,7 +141,14 @@
   (save-buffer)
   (kill-buffer)
   )
-
+(defun unix-file ()
+  "Change the current buffer to Unix line-ends."
+  (interactive)
+  (set-buffer-file-coding-system 'unix t))
+(defun dos-file ()
+  "Change the current buffer to DOS line-ends."
+  (interactive)
+  (set-buffer-file-coding-system 'dos t))
 
 
 ;;
@@ -120,5 +166,13 @@
 ;; C-pgup C-pgdown for windows circling
 (global-set-key [(ctrl previous)] '(lambda () (interactive) (other-window -1)))
 (global-set-key [(ctrl next)] '(lambda () (interactive) (other-window 1)))
+
+
+;;
+;; ACTIVATE "EXPORT" COMMANDS --------------------------------------------------------------------------
+;;
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
 
 ;; END ;;
