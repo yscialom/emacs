@@ -5,7 +5,7 @@
 function needs_sudo () {
     local dst="${1}"
 
-    local dir=$(dirname $(eval "echo ${dst}"))
+    local dir=$(dirname "${dst}")
     if [[ -w "${dir}" ]]
     then return 1
     else return 0
@@ -26,11 +26,12 @@ function install_module () {
     local module="$(dirname ${module_file})"
 
     while read -r src dst ; do
-        install_file "${module}/${src}" "${dst}"
+        local true_dst=$(eval "readlink -f ${dst}")
+        install_file "${module}/${src}" "${true_dst}"
     done < "${module_file}"
 }
 
-find . -maxdepth 2 -mindepth 2 -type f -name install |\
+find $(dirname $(readlink -f "${0}")) -maxdepth 2 -mindepth 2 -type f -name install |\
 while read module_file ; do
     install_module "${module_file}"
 done
