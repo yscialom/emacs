@@ -1,3 +1,4 @@
+# -*-shell-script-*-
 ##
 # YSC aliases
 #
@@ -12,8 +13,9 @@ alias ll='ls -alhF'
 # grep
 alias grep='/bin/grep --color=auto'
 alias rgrep='grep --recursive --line-number'
-# mkdir+cd
+# cd+...
 cdn() { mkdir -p "${1}" && cd "${1}"; }
+cdtmp() { cd $(mktemp -d); }
 # which / command
 alias which='command -v'
 
