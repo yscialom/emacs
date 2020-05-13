@@ -3,6 +3,7 @@
 #
 #TODO
 
+
 #
 ## === BEHAVIOUR ===
 #
@@ -11,6 +12,7 @@
 	prune = true
 [fetch]
 	prune = true
+
 
 #
 ## === FEATURES ===
@@ -40,3 +42,10 @@
 #
 [credential]
     helper = store
+
+
+#
+## === MACHINE SPECIFICS ===
+#
+[include]
+    path = .gitconfig-local # relative to this file
