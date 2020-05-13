@@ -12,7 +12,8 @@ alias l='ls -CF'
 alias ll='ls -alhF'
 # grep
 alias grep='/bin/grep --color=auto'
-alias rgrep='grep --recursive --line-number'
+alias ngrep='grep --line-number'
+alias rgrep='ngrep --recursive'
 # cd+...
 cdn() { mkdir -p "${1}" && cd "${1}"; }
 cdtmp() { cd $(mktemp -d); }
@@ -28,6 +29,7 @@ function bak () {
 #
 ## === DEVELOPMENT ===
 #
+alias json='python3 -m json.tool' # pretty print json strings from stdin to stdout
 
 
 #
